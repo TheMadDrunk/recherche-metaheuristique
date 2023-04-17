@@ -28,12 +28,14 @@ Path read_path(fstream& file);
 
 void print_indices(Path path);
 
-Path escalade_simple(Path init_path);
+Path successeur_2opt(Path &initial_path);
 
-Path escalade_simple_antiplateau(Path init_path);
+Path path_shuffle(Path path);
 
-Path escalade_complete(Path init_path,int nStart);
+bool operator==(const Point &l, const Point &r);
 
-Path recuit_simule(Path init_path,double alpha);
+bool operator==(const Path &l, const Path &r);
+
+bool operator<(const Path &l, const Path &r);
 
 #endif
