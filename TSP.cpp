@@ -1,0 +1,214 @@
+#include "TSP.hpp"
+#include <bits/stdc++.h>
+
+double distance(const Point &a, const Point &b)
+{
+    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+}
+
+double length(vector<Point> &itineraire)
+{
+    double valeur = 0;
+    for (int i = 1; i < itineraire.size(); i++)
+    {
+        valeur += distance(itineraire[0], itineraire[1]);
+    }
+    valeur += distance(itineraire.front(), itineraire.back());
+    return valeur;
+}
+
+Point read_point(fstream &file)
+{
+    Point out;
+    file >> out.indice >> out.x >> out.y;
+    return out;
+}
+
+void print_indices(Path path)
+{
+    for (auto i : path.arr)
+    {
+        cout << i.indice << ' ';
+    }
+    cout << "\nval : " << path.value << '\n';
+}
+
+void compute_value(Path &tsp)
+{
+    tsp.value = length(tsp.arr);
+}
+
+Path read_path(fstream &file)
+{
+    int t;
+    file >> t;
+
+    Path out;
+
+    while (t--)
+        out.arr.push_back(read_point(file));
+    compute_value(out);
+
+    return out;
+}
+
+vector<Point> _2opt(vector<Point> &arr, int start, int end)
+{
+    vector<Point> out(arr.begin(), arr.end());
+    reverse(out.begin() + start, out.begin() + end);
+    return out;
+}
+
+Path path_shuffle(Path path)
+{
+    random_shuffle(path.arr.begin(), path.arr.end());
+    compute_value(path);
+    return path;
+}
+
+Path successeur_2opt(Path &initial_path)
+{
+    double length_best = initial_path.value;
+    vector<Point> current_best = initial_path.arr;
+    int size = initial_path.arr.size();
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = i + 1; j < size; j++)
+        {
+            vector<Point> successeur = _2opt(current_best, i, j);
+            double successeur_length = length(successeur);
+            if (successeur_length <= length_best)
+            {
+                length_best = successeur_length;
+                current_best = successeur;
+            }
+        }
+    }
+
+    Path out = {current_best, length_best};
+    return out;
+}
+
+bool operator<(const Path &l, const Path &r)
+{
+    return l.value < r.value;
+}
+
+bool operator==(const Path &l, const Path &r)
+{
+    return l.value == r.value;
+}
+
+bool operator==(const Point &l, const Point &r)
+{
+    return l.indice == r.indice;
+}
+
+Path escalade_simple_antiplateau(Path init_path)
+{
+    bool maxlocal;
+    int plateau = 0;
+    Path current = init_path;
+    do
+    {
+        maxlocal = true;
+        Path next = successeur_2opt(current);
+        if (next < current)
+        {
+            current = next;
+            maxlocal = false;
+            plateau = 0;
+        }
+        else if (next == current and next.arr != current.arr and plateau < 500)
+        {
+            current = next;
+            maxlocal = false;
+            plateau++;
+        }
+    } while (!maxlocal);
+
+    return current;
+}
+
+Path escalade_simple(Path init_path)
+{
+    bool maxlocal;
+    Path current = init_path;
+    do
+    {
+        maxlocal = true;
+        Path next = successeur_2opt(current);
+        if (next < current)
+        {
+            current = next;
+            maxlocal = false;
+        }
+    } while (!maxlocal);
+
+    return current;
+}
+
+Path escalade_complete(Path init_path, int nStart)
+{
+    Path best = init_path, random_start = init_path;
+
+    while (nStart--)
+    {
+
+        Path next = escalade_simple(path_shuffle(init_path));
+        if (next < best)
+            best = next;
+    }
+    return best;
+}
+
+double compute_init_temperature(Path path, double startP)
+{
+    long double deltamean = 0;
+    int size = 100;
+    for (int i = 0; i < size; i++){
+        deltamean += abs(path_shuffle(path).value - path_shuffle(path).value);
+        //cout<<"deltamen : "<<deltamean<<'\n';
+    }
+
+    deltamean /= size;
+    //cout<<"deltamen/100:"<<deltamean<<'\n';
+    //cout<<"log"<<log(startP)<<'\n';
+    return  - deltamean / log(startP);
+}
+
+// probability between 0.0 and 1.0
+bool random_bool_with_prob( double prob )  
+{
+    prob*=100;
+    srand(time(0));
+    if(prob >= rand()%100)
+        return true;
+    return false;
+}
+
+Path recuit_simule(Path init_path,double alpha)
+{
+
+    double T, init_T = T = compute_init_temperature(init_path, 0.5);
+    cout<<" init T :"<<init_T<<'\n';
+    int essais = (int)pow(init_path.arr.size()/2, 2);
+
+    Path current = init_path;
+    double dE;
+    while (T/init_T > 0.1)
+    {
+        for (int i = 0; i < essais; i++)
+        {
+            Path next = path_shuffle(current);//random path
+            dE = next.value-current.value;
+
+            if (dE<0 or random_bool_with_prob(exp(-dE/T)))
+                current = next;
+        }
+        //cout<<"T : "<<T<<"\n";
+        T*=alpha;
+    }
+
+    return current;
+}
