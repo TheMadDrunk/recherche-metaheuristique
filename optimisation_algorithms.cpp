@@ -1,6 +1,8 @@
 #include "TSP.hpp"
 #include "optimisation_algorithms.hpp"
+#include "genetic_algorithm.hpp"
 #include <cmath>
+#include <algorithm>
 
 Path escalade_simple_antiplateau(Path init_path)
 {
@@ -74,12 +76,13 @@ double compute_init_temperature(Path path, double startP)
 }
 
 // probability between 0.0 and 1.0
-bool random_bool_with_prob( double prob )  
+bool random_bool_with_prob( double prob ) 
 {
     prob*=100;
-    srand(time(0));
-    if(prob >= rand()%100)
+    int nb = rand()%100;
+    if(prob >= nb)
         return true;
+
     return false;
 }
 
@@ -107,4 +110,33 @@ Path recuit_simule(Path init_path,double alpha)
     }
 
     return current;
+}
+
+Path genetic_algorithm(Path init_path,int aim_value,int popu_size){
+    vector<Path> population = init_population(init_path,popu_size);
+    int gen_size = init_path.arr.size();
+    Path best = init_path;
+
+    while (best.value > aim_value)
+    {
+        cout<<"selection\n";
+        vector<Path> selected = selection(population,popu_size/2);
+        cout<<"croisement\n";
+        vector<Path> children = croisement(selected);
+        cout<<"mutation\n";
+        //children = mutation(children,1.75/double(popu_size*gen_size));
+        children = mutation(children,0.2);
+
+        population.insert(population.end(),children.begin(),children.end());
+           
+        sort(population.begin(),population.end(),[](Path& l,Path& r){return l.value < r.value;});
+        population.erase(population.begin()+popu_size,population.end());
+        print_population(population);
+        
+        best = population[0];
+        cout<<"best : "<<best.value<<'\n';
+    }   
+
+    return best;
+    
 }

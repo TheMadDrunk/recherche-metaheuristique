@@ -34,6 +34,8 @@ Path path_shuffle(Path path);
 
 bool operator==(const Point &l, const Point &r);
 
+bool operator<(const Point &l, const Point &r);
+
 bool operator==(const Path &l, const Path &r);
 
 bool operator<(const Path &l, const Path &r);

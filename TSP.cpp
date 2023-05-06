@@ -103,3 +103,7 @@ bool operator==(const Point &l, const Point &r)
 {
     return l.indice == r.indice;
 }
+
+bool operator<(const Point &l, const Point &r){
+    return l.indice < r.indice;
+}
