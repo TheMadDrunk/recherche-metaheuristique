@@ -24,23 +24,23 @@ int main(){
     print_indices(initpath);
 
     Path optimazed_path = escalade_simple(initpath);
-    cout<<"escalade simple\n";
+    cout<<"->>>> escalade simple\n";
     print_indices(optimazed_path);
 
     optimazed_path = escalade_simple_antiplateau(initpath);
-    cout<<"escalade simple antiplateau\n";
+    cout<<"->>>> escalade simple antiplateau\n";
     print_indices(optimazed_path);
     
     optimazed_path = escalade_complete(initpath,10);
-    cout<<"escalade complete\n";
+    cout<<"->>>> escalade complete\n";
     print_indices(optimazed_path);
 
     optimazed_path = recuit_simule(initpath,0.90);
-    cout<<"recuit simule\n";
+    cout<<"->>>> recuit simule\n";
     print_indices(optimazed_path);
 
-    optimazed_path = genetic_algorithm(initpath,2000,40);
-    cout<<"genetic algorithm\n";
+    optimazed_path = genetic_algorithm(initpath,4000,40);
+    cout<<"->>>> genetic algorithm\n";
     print_indices(optimazed_path);
     
     return 0;

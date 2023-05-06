@@ -131,7 +131,7 @@ Path genetic_algorithm(Path init_path,int aim_value,int popu_size){
            
         sort(population.begin(),population.end(),[](Path& l,Path& r){return l.value < r.value;});
         population.erase(population.begin()+popu_size,population.end());
-        print_population(population);
+        //print_population(population);
         
         best = population[0];
         cout<<"best : "<<best.value<<'\n';
