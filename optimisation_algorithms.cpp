@@ -90,7 +90,7 @@ Path recuit_simule(Path init_path,double alpha)
 {
 
     double T, init_T = T = compute_init_temperature(init_path, 0.5);
-    
+    cout<<T<<"rmp\n";
     int essais = (int)pow(init_path.arr.size()/2, 2);
 
     Path current = init_path;
@@ -99,7 +99,10 @@ Path recuit_simule(Path init_path,double alpha)
     {
         for (int i = 0; i < essais; i++)
         {
-            Path next = path_shuffle(current);//random path
+            //Path next = path_shuffle(current);//random path
+            Path next = successeur_2opt(current);//random path
+            //Path next = random_swap(current);//random path
+
             dE = next.value-current.value;
 
             if (dE<0 or random_bool_with_prob(exp(-dE/T)))
@@ -116,27 +119,29 @@ Path genetic_algorithm(Path init_path,int aim_value,int popu_size){
     vector<Path> population = init_population(init_path,popu_size);
     int gen_size = init_path.arr.size();
     Path best = init_path;
-
-    while (best.value > aim_value)
+    int gen = 1;
+    while (best.value > aim_value and gen < 5000)
     {
-        cout<<"selection\n";
+        //cout<<"selection\n";
         vector<Path> selected = selection(population,popu_size/2);
-        cout<<"croisement\n";
+        gen++;
+        //cout<<"croisement\n";
         vector<Path> children = croisement(selected);
-        cout<<"mutation\n";
+        //cout<<"mutation\n";
         //children = mutation(children,1.75/double(popu_size*gen_size));
-        children = mutation(children,0.2);
+        children = mutation(children,0.4);
 
         population.insert(population.end(),children.begin(),children.end());
            
         sort(population.begin(),population.end(),[](Path& l,Path& r){return l.value < r.value;});
+
         population.erase(population.begin()+popu_size,population.end());
         //print_population(population);
         
         best = population[0];
-        cout<<"best : "<<best.value<<'\n';
+        //cout<<"best : "<<best.value<<'\n';
     }   
-
+    cout<<"generation: "<<gen<<'\n';
     return best;
     
 }

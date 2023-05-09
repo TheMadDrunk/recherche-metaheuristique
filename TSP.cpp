@@ -11,7 +11,7 @@ double length(vector<Point> &itineraire)
     double valeur = 0;
     for (int i = 1; i < itineraire.size(); i++)
     {
-        valeur += distance(itineraire[0], itineraire[1]);
+        valeur += distance(itineraire[i-1], itineraire[i]);
     }
     valeur += distance(itineraire.front(), itineraire.back());
     return valeur;
@@ -87,6 +87,16 @@ Path successeur_2opt(Path &initial_path)
 
     Path out = {current_best, length_best};
     return out;
+}
+
+Path random_swap(Path& path){
+    Path swaped = path;
+    int size = path.arr.size();
+    
+    int idx1 = rand()%size,idx2 = rand()%size;
+    swap(swaped.arr[idx1],swaped.arr[idx2]);
+    compute_value(swaped);
+    return swaped;
 }
 
 bool operator<(const Path &l, const Path &r)

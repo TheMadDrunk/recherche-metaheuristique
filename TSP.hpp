@@ -32,6 +32,8 @@ Path successeur_2opt(Path &initial_path);
 
 Path path_shuffle(Path path);
 
+Path random_swap(Path& path);
+
 bool operator==(const Point &l, const Point &r);
 
 bool operator<(const Point &l, const Point &r);

@@ -85,16 +85,6 @@ vector<Path> croisement(vector<Path>& population){
     return out;
 }
 
-Path random_swap(Path& path){
-    Path swaped = path;
-    int size = path.arr.size();
-    
-    int idx1 = rand()%size,idx2 = rand()%size;
-    swap(swaped.arr[idx1],swaped.arr[idx2]);
-    compute_value(swaped);
-    return swaped;
-}
-
 vector<Path> mutation(vector<Path>& population,double prob){
     vector<Path> out;
     

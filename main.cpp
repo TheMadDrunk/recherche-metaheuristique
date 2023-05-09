@@ -6,8 +6,6 @@ using namespace std;
 
 int main(){
 
-    srand(time(NULL));
-
     cout<<"Entrer le nom du fichier : \n";
     string nomfichier = "berlin52";
     //cin>>nomfichier;
@@ -23,23 +21,23 @@ int main(){
     cout<<"init path\n";
     print_indices(initpath);
 
-    Path optimazed_path = escalade_simple(initpath);
+    Path optimazed_path = escalade_simple( path_shuffle(  initpath));
     cout<<"->>>> escalade simple\n";
     print_indices(optimazed_path);
 
-    optimazed_path = escalade_simple_antiplateau(initpath);
+    optimazed_path = escalade_simple_antiplateau(optimazed_path);
     cout<<"->>>> escalade simple antiplateau\n";
     print_indices(optimazed_path);
     
-    optimazed_path = escalade_complete(initpath,10);
+    optimazed_path = escalade_complete(optimazed_path,10);
     cout<<"->>>> escalade complete\n";
     print_indices(optimazed_path);
 
-    optimazed_path = recuit_simule(initpath,0.90);
+    optimazed_path = recuit_simule(optimazed_path,0.8);
     cout<<"->>>> recuit simule\n";
     print_indices(optimazed_path);
 
-    optimazed_path = genetic_algorithm(initpath,4000,40);
+    optimazed_path = genetic_algorithm(optimazed_path,7600,100);
     cout<<"->>>> genetic algorithm\n";
     print_indices(optimazed_path);
     
